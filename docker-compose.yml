@@ -1,0 +1,50 @@
+services:
+  mongo1:
+    container_name: "mongo1"
+    image: "mongo:5"
+    volumes:
+      - ./scripts/rs-init.sh:/scripts/rs-init.sh
+    networks:
+      - spark-net
+    ports:
+      - 27017:27017
+    depends_on:
+      mongo2:
+        condition: "service_healthy"
+    restart: "always"
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval \"show dbs;\"" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "mongo-rs"]
+  mongo2:
+    container_name: "mongo2"
+    image: "mongo:5"
+    networks:
+      - spark-net
+    ports:
+      - 27018:27017
+    restart: "always"
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval \"show dbs;\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "mongo-rs"]
+  loader:
+    container_name: "loader"
+    image: "python:mongo"
+    volumes:
+      - ./scripts/mongo-load.py:/scripts/mongo-load.py
+      - ./data:/data
+    networks:
+      - spark-net
+    depends_on:
+      mongo1:
+        condition: "service_healthy"
+    tty: true
+    restart: "always"
+networks:
+  spark-net:
+    driver: "bridge"

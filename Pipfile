@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+pytest = "*"
+django = "==3.2.10"
+djangorestframework = "==3.13.1"
+djangorestframework-simplejwt = "==5.2.0"
+dj-database-url = "==1.0.0"
+pymongo = "==3.12.3"
+djongo = "*"
+redis = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"

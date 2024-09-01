@@ -1,0 +1,13 @@
+requests
+pytest
+Django==3.2.10
+djangorestframework==3.13.1
+djangorestframework-simplejwt==5.2.0
+dj-database-url==1.0.0
+pymongo==3.12.3
+djongo
+redis
+
+
+
+# dnspython

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Spark | Sign In</title>
+
+  <!-- Viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Favicon and Touch Icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/static/assets/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/static/assets/favicon/safari-pinned-tab.svg" color="#6366f1">
+  <link rel="shortcut icon" href="/static/assets/favicon/favicon.ico">
+  <meta name="msapplication-TileColor" content="#080032">
+  <meta name="msapplication-config" content="/static/assets/favicon/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="google-signin-client_id"
+    content="1053967925801-3oe28ijss2a0ltf0t172oihri9f9ruok.apps.googleusercontent.com">
+
+  <!-- Google SSO -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+
+    function decodeJwtResponseFromGoogleAPI(token) {
+      let base64Url = token.split('.')[1]
+      let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      let jsonPayload =
+        decodeURIComponent(atob(base64).split('').map(function (c) {
+          return '%' + ('00' +
+            c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+      return JSON.parse(jsonPayload)
+    }
+
+
+    function handleCredentialResponse(userCredentials, b) {
+      console.log(userCredentials);
+      console.log(b);
+      const decodedJson = decodeJwtResponseFromGoogleAPI(userCredentials.credential);
+      console.log(decodedJson.email);
+      //window.location.href = "/view-graphs";
+    }
+  </script>
+
+  <script>
+
+    function onSignIn(googleUser) {
+      const profile = googleUser.getBasicProfile();
+      console.log('ID: ' + profile.getId()); // Do something with the user ID
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail()); // User's email address
+
+      // You can also use Google's ID token for server-side verification
+      const idToken = googleUser.getAuthResponse().id_token;
+      console.log('ID Token: ' + idToken);
+    }
+  </script>
+
+  <!-- Vendor Styles -->
+  <link rel="stylesheet" media="screen" href="/static/assets/vendor/boxicons/css/boxicons.min.css" />
+
+  <!-- Main Theme Styles + Bootstrap -->
+  <link rel="stylesheet" media="screen" href="/static/assets/css/theme.min.css">
+
+  <!-- Page loading styles -->
+  <link rel="stylesheet" media="screen" href="/static/css/page-loading.css">
+
+  <!-- Theme mode -->
+  <script>
+    let mode = window.localStorage.getItem('mode'),
+      root = document.getElementsByTagName('html')[0];
+    if (mode !== null && mode === 'dark') {
+      root.classList.add('dark-mode');
+    } else {
+      root.classList.remove('dark-mode');
+    }
+  </script>
+
+  <script src="/static/api/js/user_validation_api.js"></script>
+
+  <script>
+    function onFormSubmit(form) {
+      if (!form.checkValidity()) {
+        return;
+      }
+      const username = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      login_api(username, password, (text) => {
+        alert(text);
+      });
+      return false;
+    }
+
+    redirect_if_logged_in_user();
+  </script>
+
+  <!-- Page loading scripts -->
+  <script src="/static/js/page_loading.js"></script>
+
+  <!-- Import htmls -->
+  <script src="/static/js/import_htmls.js"></script>
+</head>
+
+
+<!-- Body -->
+
+<body>
+
+  <!-- Page loading spinner -->
+  <div class="page-loading active">
+    <div class="page-loading-inner">
+      <div class="page-spinner"></div><span>Loading...</span>
+    </div>
+  </div>
+
+
+  <!-- Page wrapper for sticky footer -->
+  <!-- Wraps everything except footer to push footer to the bottom of the page if there is little content -->
+  <main class="page-wrapper">
+
+
+    <!-- Navbar -->
+    <!-- Remove "fixed-top" class to make navigation bar scrollable with the page -->
+    <div class="append-html-code" html-file-att="/static/common-html/header-nav.html"
+      dependent-js="/static/assets/js/theme.min.js;;/static/js/common_code/hide_logout.js"></div>
+
+
+    <!-- Page content -->
+    <section class="position-relative h-100 pt-5 pb-4">
+
+      <!-- Sign in form -->
+      <div class="container d-flex flex-wrap justify-content-center justify-content-xl-start h-100 pt-5">
+        <div class="w-100 align-self-end pt-1 pt-md-4 pb-4" style="max-width: 526px;">
+          <h1 class="text-center text-xl-start">Welcome Back</h1>
+          <p class="text-center text-xl-start pb-3 mb-3">Don’t have an account yet? <a href="/register">Register
+              here.</a></p>
+          <form class="needs-validation mb-2" novalidate onsubmit="return onFormSubmit(this);">
+            {%csrf_token%}
+            <div class="position-relative mb-4">
+              <label for="email" class="form-label fs-base">Email</label>
+              <input type="email" id="email" class="form-control form-control-lg" required>
+              <div class="invalid-feedback position-absolute start-0 top-100">Please enter a valid email address!</div>
+            </div>
+            <div class="mb-4">
+              <label for="password" class="form-label fs-base">Password</label>
+              <div class="password-toggle">
+                <input type="password" id="password" class="form-control form-control-lg" required>
+                <label class="password-toggle-btn" aria-label="Show/hide password">
+                  <input class="password-toggle-check" type="checkbox">
+                  <span class="password-toggle-indicator"></span>
+                </label>
+                <div class="invalid-feedback position-absolute start-0 top-100">Please enter your password!</div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <div class="form-check">
+                <input type="checkbox" id="remember" class="form-check-input">
+                <label for="remember" class="form-check-label fs-base">Remember me</label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary shadow-primary btn-lg w-100">Sign
+              in</button>
+          </form>
+          <a href="#" class="btn btn-link btn-lg w-100">Forgot your password?</a>
+          <hr class="my-4">
+          <h6 class="text-center mb-4">Or sign in with your social network</h6>
+          <div id="g_id_onload"
+            data-client_id="1053967925801-3oe28ijss2a0ltf0t172oihri9f9ruok.apps.googleusercontent.com"
+            data-moment_callback="handleCredentialResponse" data-native_callback="handleCredentialResponse"
+            data-callback="handleCredentialResponse" data-auto_prompt="false" data-your_own_param_1_to_login="any_value"
+            data-your_own_param_2_to_login="any_value">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with"
+            data-shape="rectangular" data-logo_alignment="left">
+          </div>
+          <div class="row row-cols-1 row-cols-sm-2">
+            <div class="col mb-3">
+              <a href="#" class="btn btn-icon btn-secondary btn-google btn-lg w-100">
+                <i class="bx bxl-google fs-xl me-2"></i>
+                Google
+              </a>
+            </div>
+            <div class="col mb-3">
+              <a href="#" class="btn btn-icon btn-secondary btn-facebook btn-lg w-100">
+                <i class="bx bxl-facebook fs-xl me-2"></i>
+                Facebook
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Background -->
+      <div
+        class="position-absolute top-0 end-0 w-50 h-100 bg-position-center bg-repeat-0 bg-size-cover d-none d-xl-block"
+        style="background-image: url(/static/assets/img/account/signin-bg.jpg);"></div>
+    </section>
+  </main>
+
+
+  <!-- Back to top button -->
+  <a href="#top" class="btn-scroll-top" data-scroll>
+    <span class="btn-scroll-top-tooltip text-muted fs-sm me-2">Top</span>
+    <i class="btn-scroll-top-icon bx bx-chevron-up"></i>
+  </a>
+
+
+  <!-- Vendor Scripts -->
+  <script src="/static/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/assets/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+  <!-- Main Theme Script -->
+  <script src="/static/assets/js/theme.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+#dropdownAndTokensDiv {
+    width: 20%;
+    max-height: inherit;
+    overflow: hidden;
+    padding-bottom: 10px;
+}
+
+#draggableComponents {
+    max-height: inherit;
+    height: 90%;
+    overflow: scroll;
+    border: 1px solid black;
+}
+
+.header-div {
+    margin-bottom: 20px;
+    height: 40px;
+}
+
+#dropdownAndTokensDiv select {
+    width: 100%;
+}
+
+#collectionRightDiv {
+    width: 75%;
+    margin-left: 5%;
+    max-height: inherit;
+    overflow: hidden;
+    padding-bottom: 10px;
+}
+
+#nameAndButtonHeader {
+    display: flex;
+    width: 100%;
+    height: 40px;
+}
+
+#nameAndButtonHeader input {
+    width: 70%;
+}
+
+#nameAndButtonHeader button {
+    width: 25%;
+    margin-left: 5%;
+}
+
+#tokensInCustomCollectionContainer {
+    width: 100%;
+    height: 90%;
+    overflow: scroll;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+#draggableComponents {
+    padding: 10px 0 0 10px;
+}
